@@ -226,8 +226,10 @@ jobs:
         
         # 注入仓库信息到 data-config.js / Inject repository info into data-config.js
         if [ -f "js/data-config.js" ]; then
-          sed -i "s/PLACEHOLDER_REPO_OWNER/$REPO_OWNER/g" js/data-config.js
-          sed -i "s/PLACEHOLDER_REPO_NAME/$REPO_NAME/g" js/data-config.js
+          # Match both the template placeholders and a value injected by an
+          # earlier run, so forks always point at their own data branch.
+          sed -i -E "s|^[[:space:]]*repoOwner: '[^']*',|    repoOwner: '$REPO_OWNER',|" js/data-config.js
+          sed -i -E "s|^[[:space:]]*repoName: '[^']*',|    repoName: '$REPO_NAME',|" js/data-config.js
           echo "✅ 仓库信息已注入到 js/data-config.js / Repository info injected into js/data-config.js"
         else
           echo "❌ ERROR: js/data-config.js not found!"
